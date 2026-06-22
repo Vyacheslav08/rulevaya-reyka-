@@ -22,7 +22,7 @@ export async function askClaude(question, history = []) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question, inventory: inventoryText, history }),
   })
-  if (!res.ok) throw new Error(API error ${res.status})
+  if (!res.ok) throw new Error(`API error ${res.status}`)
   const data = await res.json()
   return data.answer
 }
