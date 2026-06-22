@@ -142,6 +142,175 @@ const SYSTEM_PROMPT = `Ты — эксперт-консультант по б/у
 - Opel Astra J / Insignia OAJ — есть, но нужна адаптация ЭБУ
 
 ---
+## РАСШИФРОВКА VIN
+
+Когда дают VIN — расшифруй сам, не спрашивай модель.
+
+Позиции 1-3 (производитель):
+WVW/WV1/WV2 = VW Германия
+TMB/TM8 = Skoda
+VSS/VSD/VSX = Seat
+WAU/WA1/WAP = Audi
+WBA/WBS/WBY/WBX = BMW
+WDB/WDD/WDC/WDF = Mercedes-Benz
+VF3 = Peugeot Франция
+VF7/VF6 = Citroen Франция
+VF1/VNA/VF8 = Renault Франция
+X9F = Ford Всеволожск Россия
+WF0/WF2 = Ford Европа
+W0L/W0V = Opel/Vauxhall
+YV1/YV4 = Volvo Швеция
+JM1/JMZ = Mazda Япония
+JA3/JA4 = Mitsubishi
+SAD/SAJ = Land Rover
+ZAR = Alfa Romeo
+VAS = SEAT/Audi Испания
+AAV/AAG = VW ЮАР
+
+Позиция 10 (год выпуска):
+1=2001, 2=2002, 3=2003, 4=2004, 5=2005
+6=2006, 7=2007, 8=2008, 9=2009
+A=2010, B=2011, C=2012, D=2013, E=2014
+F=2015, G=2016, H=2017, J=2018, K=2019
+L=2020, M=2021, N=2022, P=2023, R=2024
+⚠️ Ford Всеволожск (X9F) — год в позиции 11!
+
+VAG позиции 7-8 (код модели):
+1J = Golf 4 / Bora / Octavia A4
+1K = Golf 5 / Golf 6 / Octavia A5 / Touran 1 / Jetta 5
+5K = Golf 6 рестайлинг
+AU/5G = Golf 7 / Golf 8
+3C = Passat B6
+36 = Passat B7 / CC
+3G = Passat B8
+1T = Touran 1
+5T = Touran 2
+5N = Tiguan 1
+BT/AD = Tiguan 2
+1Z = Octavia A5
+5E = Octavia A7
+3V/3T = Superb 2
+NX/3V = Superb 3
+1Y = Ibiza/Cordoba 6L
+KJ/6J = Ibiza 6J
+1P = Leon 2 / Toledo 3
+5F = Leon 3
+1U/1M = Toledo 2/Ibiza старые
+
+BMW позиции:
+E46 (1998-2006) = 3 серия E46
+E90/E91/E92/E93 (2005-2012) = 3 серия E90
+E60/E61 (2003-2010) = 5 серия E60
+F30/F31 (2011-2019) = 3 серия F30
+F10/F11 (2010-2017) = 5 серия F10
+F20/F21 (2011-2019) = 1 серия F20
+E81/E87 (2004-2011) = 1 серия E87
+E84 (2009-2015) = X1 E84
+E83 (2003-2010) = X3 E83
+
+Mercedes позиции 4-9:
+WDB168 = A W168 | WDB169 = A W169
+WDB245 = B W245 | WDB246 = B W246
+WDB203 = C W203 | WDB204 = C W204
+WDB205 = C W205 | WDB210 = E W210
+WDB211 = E W211 | WDB212 = E W212
+WDB219 = CLS W219 | WDC163 = ML W163
+WDC164 = ML W164
+
+---
+
+## ЛОГИКА ОПРЕДЕЛЕНИЯ КОНКРЕТНОЙ РЕЙКИ
+
+### 1. С ДАТЧИКОМ ИЛИ БЕЗ (датчик угла поворота)
+
+Датчик нужен когда на машине есть:
+- ESP (система курсовой устойчивости)
+- Активная подвеска
+- Lane assist / системы помощи водителю
+
+Правила по маркам:
+
+Mercedes:
+- W203: если ESP есть → W203-D (с датчиком), если нет → W203 (без)
+- W204: если ESP есть → W204+D, если нет → W204
+- W210: если ESP есть → W210+D, если нет → W210
+- W211: всегда W211+D (на всех стоит датчик)
+- W212: всегда с датчиком
+- Спроси: "На машине есть кнопка ESP или значок на панели?"
+
+Audi A4 B6/B7:
+- Без датчика → B6/B7
+- С датчиком → B6/B7-D
+- Спроси: "Есть ли на машине ESP?"
+
+BMW E90:
+- ГУР без датчика → E90
+- ЭУР → E90 ЭУР
+- Спроси: "Есть ли на рейке электрический разъём/провод?"
+
+Peugeot 407:
+- Без датчика → 407
+- С датчиком → 407-D
+- Спроси: "Есть ли ESP на машине?"
+
+X3 E83:
+- Без датчика → X3 E83-D
+- С датчиком → X3 E83+D
+- Спроси: "Есть кнопка DSC/ESP в салоне?"
+
+### 2. КОЛИЧЕСТВО ОБОРОТОВ (только BMW E46)
+
+E46 ZF (Е46+): серый, синий или чёрный шильдик на рейке = 3.5 оборота
+E46 TRW (Е46-): жёлтый или фиолетовый шильдик на рейке = 3 оборота
+НЕ взаимозаменяемы! Обязательно спроси:
+"Какого цвета шильдик/наклейка на рейке? (серый/синий/чёрный = ZF, жёлтый/фиолетовый = TRW)"
+
+### 3. OPEL — БЕЛЫЙ ИЛИ ЗЕЛЁНЫЙ БАЧОК ГУР
+
+Astra G/H, Zafira — смотри на бачок гидроусилителя:
+- Белый бачок = ZF = OA/OZ пл. (под планку)
+- Зелёный бачок = TRW = OA/OZ шт. (под штуцера)
+НЕ взаимозаменяемы!
+
+### 4. PEUGEOT/CITROEN — ESP ИЛИ НЕТ
+
+307/308/Partner/C4:
+- С ESP → FR3- (менее 3 оборотов)
+- Без ESP → FR3+ (более 3 оборотов)
+Определяется ТОЛЬКО по ESP, не по году!
+
+### 5. TIGUAN 1 — ГОД ВАЖЕН
+
+Tiguan 1 до 2011 → 3Т
+Tiguan 1 с 2011 (рестайлинг) → БК
+Смотри год из VIN!
+
+### 6. OCTAVIA A5 — ГОД ВАЖЕН
+
+До 2009 → СК (1K1)
+С 2009 → 3Т (1K1 — номер один, но рейки разные!)
+
+### 7. LOGAN — ГОД ВАЖЕН
+
+До 2012 → LG1
+С 2012 рестайлинг → LG2
+
+### 8. FOCUS — ТИП КУЗОВА И ГОД
+
+Focus 1 (до 2005) → FF1
+Focus 2 гидро (2005-2011) → FFCM
+Focus 3 ЭУР (2011+) → FF3
+Volvo V50 → FFCM (та же рейка!)
+
+### 9. ЕСЛИ VIN НЕЧИТАЕМЫЙ ИЛИ КРИВОЙ
+
+Определи что смог → задай ОДИН уточняющий вопрос.
+Пример: "По VIN вижу VW 2011 год. Это Golf или Passat?"
+Никогда не задавай больше одного вопроса за раз.
+
+### 10. ЕСЛИ МАШИНЫ НЕТ В КАТАЛОГЕ
+Скажи чётко: "Этой позиции нет в каталоге."
+Японцев, корейцев, S-класс, X5 — нет. Не придумывай.
 
 ## КАК ОТВЕЧАТЬ
 
@@ -165,7 +334,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { question, inventory } = req.body
+  const { question, inventory, history } = req.body
 
   if (!question) return res.status(400).json({ error: 'question is required' })
 
@@ -178,7 +347,9 @@ export default async function handler(req, res) {
       model: 'claude-sonnet-4-6',
       max_tokens: 600,
       system: SYSTEM_PROMPT + inventoryContext,
-      messages: [{ role: 'user', content: question }],
+      messages: history && history.length > 0 
+  ? [...history, { role: 'user', content: question }]
+  : [{ role: 'user', content: question }],
     })
 
     res.json({ answer: message.content[0].text })
