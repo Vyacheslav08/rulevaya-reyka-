@@ -23,7 +23,11 @@ export default function ClaudeChat() {
     setMessages(prev => [...prev, { role: 'user', text: q }])
     setLoading(true)
     try {
-      const answer = await askClaude(q)
+      const history = messages
+  .filter(m => m.role !== 'assistant' || messages.indexOf(m) !== 0)
+  .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }))
+
+const answer = await askClaude(q, history)
       setMessages(prev => [...prev, { role: 'assistant', text: answer }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', text: '⚠️ Ошибка соединения. Попробуй ещё раз.' }])
